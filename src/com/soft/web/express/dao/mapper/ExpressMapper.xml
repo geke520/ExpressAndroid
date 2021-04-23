@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- "快递" mybatis mapper file . generate by codebuilder -->
+<mapper namespace="com.soft.web.express.dao.ExpressDao">
+
+    <!-- 通过主键集合批量删除 -->
+    <delete id="batchDelete">
+        delete from express where express_id in 
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!-- 统计 -->
+    <select id="count" resultType="long" useCache="false" parameterType="map">
+        select count(1) from express
+        left join people on express.people_id = people.people_id
+        where 1=1
+        <if test="key_like != null and key_like != ''">
+            and (people.people_name like CONCAT('%',#{key_like},'%')
+            or people.people_phone like CONCAT('%',#{key_like},'%')
+            or people.people_address like CONCAT('%',#{key_like},'%')
+            or express.express_start_datetime like CONCAT('%',#{key_like},'%')
+            or express.express_price like CONCAT('%',#{key_like},'%') )
+        </if>
+        <if test="people_id != null">
+            and people.people_id = #{people_id}
+        </if>
+        <if test="express_start_datetime != null and express_start_datetime != ''">
+            and express_start_datetime = #{express_start_datetime}
+        </if>
+        <if test="express_start_datetime_like != null and express_start_datetime_like != ''">
+            and express_start_datetime like CONCAT('%',#{express_start_datetime_like},'%')
+        </if>
+        <if test="express_status != null">
+            and express_status = #{express_status}
+        </if>
+    </select>
+
+    <!-- 通过主键删除 -->
+    <delete id="deleteById" parameterType="long">
+        delete from express where express_id = #{express_id}
+    </delete>
+
+    <!-- 通过主键编号获得map对象 -->
+    <select id="getMapById" resultType="map" useCache="false" parameterType="String">
+        select * from express where express_id = #{express_id}
+    </select>
+
+
+
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="map" keyProperty="express_id" useGeneratedKeys="true">
+        insert into express
+            (
+                people_id,
+                express_id,
+                express_price,
+                express_start_datetime,
+                express_status
+            )values(
+                #{people_id},
+                #{express_id},
+                #{express_price},
+                #{express_start_datetime},
+                #{express_status}
+            )
+    </insert>
+
+    <!-- 查询列表 -->
+    <select id="queryList" resultType="hashmap" useCache="false" parameterType="map">
+        select
+            express_id,
+            people_id,
+            express_price,
+            express_start_datetime,
+            express_status
+        from express where 1=1 
+        <if test="people_id != null">
+            and people_id = #{people_id}
+        </if>
+        <if test="express_start_datetime != null and express_start_datetime != ''">
+            and express_start_datetime = #{express_start_datetime}
+        </if>
+        <if test="express_start_datetime_like != null and express_start_datetime_like != ''">
+            and express_start_datetime like CONCAT('%',#{express_start_datetime_like},'%')
+        </if>
+        <if test="express_status != null">
+            and express_status = #{express_status}
+        </if>
+    </select>
+
+    <!-- 获得分页列表 -->
+    <select id="queryPageList" resultType="hashmap" useCache="false" parameterType="map">
+        select
+            express.*,
+            people.*
+        from express
+        left join people on express.people_id = people.people_id
+        where 1=1
+        <if test="people_id != null">
+            and people.people_id = #{people_id}
+        </if>
+        <if test="key_like != null and key_like != ''">
+            and (people.people_name like CONCAT('%',#{key_like},'%')
+            or people.people_phone like CONCAT('%',#{key_like},'%')
+            or people.people_address like CONCAT('%',#{key_like},'%')
+            or express.express_start_datetime like CONCAT('%',#{key_like},'%')
+            or express.express_price like CONCAT('%',#{key_like},'%') )
+        </if>
+        <if test="express_start_datetime != null and express_start_datetime != ''">
+            and express_start_datetime = #{express_start_datetime}
+        </if>
+        <if test="express_start_datetime_like != null and express_start_datetime_like != ''">
+            and express_start_datetime like CONCAT('%',#{express_start_datetime_like},'%')
+        </if>
+        <if test="express_status != null">
+            and express_status = #{express_status}
+        </if>
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="map">
+        update express set
+            people_id = #{people_id},
+            express_price = #{express_price},
+            express_start_datetime = #{express_start_datetime},
+            express_status = #{express_status}
+        where express_id = #{express_id}
+    </update>
+
+
+    <select id="qrcode" resultType="map" useCache="false" parameterType="map">
+        select
+            express.*,
+            people.*
+        from express
+        left join people on express.people_id = people.people_id
+        where express_id = #{express_id}
+        and people.people_id in (select people_id from user_people where user_id = #{user_id})
+    </select>
+
+</mapper>

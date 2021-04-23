@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- "收件人" mybatis mapper file . generate by codebuilder -->
+<mapper namespace="com.soft.web.people.dao.PeopleDao">
+
+    <!-- 通过主键集合批量删除 -->
+    <delete id="batchDelete">
+        delete from people where people_id in 
+        <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <!-- 统计 -->
+    <select id="count" resultType="long" useCache="false" parameterType="map">
+        select count(1) from people where 1=1 
+        <if test="people_name != null and people_name != ''">
+            and people_name = #{people_name}
+        </if>
+        <if test="people_name_like != null and people_name_like != ''">
+            and people_name like CONCAT('%',#{people_name_like},'%')
+        </if>
+        <if test="people_phone != null and people_phone != ''">
+            and people_phone = #{people_phone}
+        </if>
+        <if test="people_phone_like != null and people_phone_like != ''">
+            and people_phone like CONCAT('%',#{people_phone_like},'%')
+        </if>
+        <if test="people_address != null and people_address != ''">
+            and people_address = #{people_address}
+        </if>
+        <if test="people_address_like != null and people_address_like != ''">
+            and people_address like CONCAT('%',#{people_address_like},'%')
+        </if>
+    </select>
+
+    <!-- 通过主键删除 -->
+    <delete id="deleteById" parameterType="long">
+        delete from people where people_id = #{people_id}
+    </delete>
+
+    <!-- 通过主键编号获得map对象 -->
+    <select id="getMapById" resultType="map" useCache="false" parameterType="long">
+        select * from people where people_id = #{people_id}
+    </select>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="map" keyProperty="people_id" useGeneratedKeys="true">
+        insert into people
+            (
+                people_name,
+                people_phone,
+                people_address
+            )values(
+                #{people_name},
+                #{people_phone},
+                #{people_address}
+            )
+    </insert>
+
+    <!-- 查询列表 -->
+    <select id="queryList" resultType="hashmap" useCache="false" parameterType="map">
+        select
+            people_id,
+            people_name,
+            people_phone,
+            people_address
+        from people where 1=1 
+        <if test="people_name != null and people_name != ''">
+            and people_name = #{people_name}
+        </if>
+        <if test="people_name_like != null and people_name_like != ''">
+            and people_name like CONCAT('%',#{people_name_like},'%')
+        </if>
+        <if test="people_phone != null and people_phone != ''">
+            and people_phone = #{people_phone}
+        </if>
+        <if test="people_phone_like != null and people_phone_like != ''">
+            and people_phone like CONCAT('%',#{people_phone_like},'%')
+        </if>
+        <if test="people_address != null and people_address != ''">
+            and people_address = #{people_address}
+        </if>
+        <if test="people_address_like != null and people_address_like != ''">
+            and people_address like CONCAT('%',#{people_address_like},'%')
+        </if>
+    </select>
+
+    <!-- 获得分页列表 -->
+    <select id="queryPageList" resultType="hashmap" useCache="false" parameterType="map">
+        select
+            people_id,
+            people_name,
+            people_phone,
+            people_address
+        from people where 1=1 
+        <if test="people_name != null and people_name != ''">
+            and people_name = #{people_name}
+        </if>
+        <if test="people_name_like != null and people_name_like != ''">
+            and people_name like CONCAT('%',#{people_name_like},'%')
+        </if>
+        <if test="people_phone != null and people_phone != ''">
+            and people_phone = #{people_phone}
+        </if>
+        <if test="people_phone_like != null and people_phone_like != ''">
+            and people_phone like CONCAT('%',#{people_phone_like},'%')
+        </if>
+        <if test="people_address != null and people_address != ''">
+            and people_address = #{people_address}
+        </if>
+        <if test="people_address_like != null and people_address_like != ''">
+            and people_address like CONCAT('%',#{people_address_like},'%')
+        </if>
+        limit #{start},#{limit}
+    </select>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="map">
+        update people set
+            people_name = #{people_name},
+            people_phone = #{people_phone},
+            people_address = #{people_address}
+        where people_id = #{people_id}
+    </update>
+
+</mapper>
